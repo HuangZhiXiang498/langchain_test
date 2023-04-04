@@ -11,3 +11,5 @@ faiss-cpu
 bs4
 unstructured
 libmagic
+pypdf
+python-dotenv
