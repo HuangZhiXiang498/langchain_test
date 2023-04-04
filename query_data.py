@@ -2,6 +2,7 @@
 from langchain.callbacks.base import AsyncCallbackManager
 from langchain.callbacks.tracers import LangChainTracer
 from langchain.chains import ConversationalRetrievalChain
+from langchain.chains import ChatVectorDBChain
 from langchain.chains.chat_vector_db.prompts import (CONDENSE_QUESTION_PROMPT,
                                                      QA_PROMPT)
 from langchain.chains.llm import LLMChain
@@ -13,7 +14,7 @@ from langchain.vectorstores.base import VectorStore, VectorStoreRetriever
 
 def get_chain(
     vectorstore: VectorStore, question_handler, stream_handler, tracing: bool = False
-) -> ConversationalRetrievalChain:
+) -> ChatVectorDBChain:
     """Create a ChatVectorDBChain for question/answering. ConversationalRetrievalChain"""
     # Construct a ChatVectorDBChain with a streaming llm for combine docs
     # and a separate, non-streaming llm for question generation
@@ -46,11 +47,11 @@ def get_chain(
         streaming_llm, chain_type="stuff", prompt=QA_PROMPT, callback_manager=manager,
     )
 
-    qa = ConversationalRetrievalChain(
-        # vectorstore=vectorstore,
+    qa = ChatVectorDBChain(
+        vectorstore=vectorstore,
         combine_docs_chain=doc_chain,
         question_generator=question_generator,
         callback_manager=manager,
-        retriever=VectorStoreRetriever(vectorstore=vectorstore),
+        # retriever=VectorStoreRetriever(vectorstore=vectorstore),
     )
     return qa
