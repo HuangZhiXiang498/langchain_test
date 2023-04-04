@@ -16,7 +16,7 @@ def ingest_pdf():
         chunk_size=1000,
         chunk_overlap=200,
     )
-    embeddings = OpenAIEmbeddings(openai_api_key="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")
+    embeddings = OpenAIEmbeddings()
     docs = text_splitter.split_documents(pdf)
     vectorstore = FAISS.from_documents(docs, embeddings)
     # Save vectorstore
