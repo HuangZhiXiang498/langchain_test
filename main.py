@@ -73,6 +73,7 @@ async def websocket_endpoint(websocket: WebSocket):
             result = await question_generator.acall(
                 {"question": question, "chat_history": chat_history}
             )
+            logging.info(result)
             result1 = await doc_chain.acall(result["context"])
             chat_history.append((question, result1["answer"]))
 
