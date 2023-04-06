@@ -74,7 +74,6 @@ def get_chat(
         stream_manager.add_handler(tracer)
 
     question_gen_llm = OpenAI(
-        temperature=0,
         verbose=True,
         callback_manager=question_manager,
     )
