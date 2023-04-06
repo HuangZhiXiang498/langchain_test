@@ -41,7 +41,7 @@ def get_chain(
     )
 
     question_generator = LLMChain(
-        llm=question_gen_llm, prompt=CONDENSE_QUESTION_PROMPT, callback_manager=manager,
+        llm=question_gen_llm, prompt=QA_PROMPT, callback_manager=manager,
     )
     doc_chain = load_qa_chain(
         streaming_llm, chain_type="stuff", prompt=QA_PROMPT, callback_manager=manager,
