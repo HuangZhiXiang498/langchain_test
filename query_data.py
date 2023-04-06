@@ -41,7 +41,6 @@ def get_chain(
         stream_manager.add_handler(tracer)
 
     question_gen_llm = ChatOpenAI(
-        model_name="gpt-3.5-turbo-0301",
         verbose=True,
         callback_manager=question_manager,
     )
@@ -60,7 +59,6 @@ def get_chain(
     )
 
     qa = ConversationalRetrievalChain(
-        # vectorstore=vectorstore,
         combine_docs_chain=doc_chain,
         question_generator=question_generator,
         callback_manager=manager,

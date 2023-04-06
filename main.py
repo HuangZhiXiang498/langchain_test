@@ -6,19 +6,15 @@ from typing import Optional
 
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.templating import Jinja2Templates
-from langchain import FAISS
-from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import VectorStore
-from callback import QuestionGenCallbackHandler, StreamingLLMCallbackHandler
 
 import query_data
-
+from callback import QuestionGenCallbackHandler, StreamingLLMCallbackHandler
 from schemas import ChatResponse
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 vectorstore: Optional[VectorStore] = None
-# vectorstore = FAISS()
 
 
 @app.on_event("startup")
