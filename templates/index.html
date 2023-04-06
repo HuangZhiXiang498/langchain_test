@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Chat Your Data</title>
-    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         .chat-body {
             width: 550px;
@@ -51,7 +51,7 @@
         }
     </style>
     <script>
-        var endpoint = "ws://192.168.0.119:9000/chat";
+        var endpoint = "ws://192.168.0.119:9000/chat1";
         var ws = new WebSocket(endpoint);
         // Receive message from server word by word. Display the words as they are received.
         ws.onmessage = function (event) {
