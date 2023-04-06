@@ -17,15 +17,17 @@ prompt_template = """Use the following pieces of context to answer the question 
 Question: {question}
 Helpful Answer:"""
 
-prompt_template_Chinese = """Use the answer the question in Chinese .
+prompt_template_Chinese = """Given the following conversation and a follow up question ,use  answer in Chinese .
 
-Question: {question}
+Chat History:
+{chat_history}
+Follow Up Input: {question}
 Helpful Answer:"""
 QA_PROMPT = PromptTemplate(
     template=prompt_template, input_variables=["context", "question"]
 )
 QA_PROMPT_Chinese = PromptTemplate(
-    template=prompt_template_Chinese, input_variables=["question"]
+    template=prompt_template_Chinese, input_variables=["chat_history", "question"]
 )
 
 
