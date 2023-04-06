@@ -45,7 +45,7 @@ def get_chain(
         verbose=True,
         callback_manager=question_manager,
     )
-    streaming_llm = OpenAI(
+    streaming_llm = ChatOpenAI(
         streaming=True,
         callback_manager=stream_manager,
         verbose=True,
