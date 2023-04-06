@@ -20,7 +20,7 @@ async def get(request: Request):
 @app.websocket("/chat")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-
+    chat_history = []
     while True:
         try:
             # Receive and send back the client message
@@ -33,8 +33,8 @@ async def websocket_endpoint(websocket: WebSocket):
             await websocket.send_json(start_resp.dict())
 
             # Call OpenAI chat model to get the response
-            result = await llm_chain.acall(question)
-
+            result = await llm_chain.acall({"question": question, "chat_history": chat_history})
+            # chat_history.append((question, result["answer"]))
             end_resp = ChatResponse(sender="bot", message=result, type="end")
             await websocket.send_json(end_resp.dict())
         except WebSocketDisconnect:
