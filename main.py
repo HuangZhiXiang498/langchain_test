@@ -73,13 +73,7 @@ async def websocket_endpoint(websocket: WebSocket):
     while True:
         try:
             # Receive and send back the client message
-            question = await websocket.receive_text()
-            resp = ChatResponse(sender="you", message=question, type="stream")
-            await websocket.send_json(resp.dict())
-
-            # Construct a response
-            start_resp = ChatResponse(sender="bot", message="", type="start")
-            await websocket.send_json(start_resp.dict())
+            question = await qa(websocket)
 
             result = await question_generator.acall(
                 {"question": question, "chat_history": chat_history}
@@ -102,6 +96,16 @@ async def websocket_endpoint(websocket: WebSocket):
             await websocket.send_json(resp.dict())
 
 
+async def qa(websocket):
+    question = await websocket.receive_text()
+    resp = ChatResponse(sender="you", message=question, type="stream")
+    await websocket.send_json(resp.dict())
+    # Construct a response
+    start_resp = ChatResponse(sender="bot", message="", type="start")
+    await websocket.send_json(start_resp.dict())
+    return question
+
+
 @app.websocket("/chat")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
@@ -117,13 +121,7 @@ async def websocket_endpoint(websocket: WebSocket):
     while True:
         try:
             # Receive and send back the client message
-            question = await websocket.receive_text()
-            resp = ChatResponse(sender="you", message=question, type="stream")
-            await websocket.send_json(resp.dict())
-
-            # Construct a response
-            start_resp = ChatResponse(sender="bot", message="", type="start")
-            await websocket.send_json(start_resp.dict())
+            question = await qa(websocket)
 
             result = await qa_chain.acall(
                 {"question": question, "chat_history": chat_history}
