@@ -59,7 +59,7 @@ def get_chain(
 
 def get_chat(
      question_handler, stream_handler, tracing: bool = False
-) -> LLMChain:
+) -> load_qa_chain:
     """Create a ChatVectorDBChain for question/answering. ConversationalRetrievalChain"""
     # Construct a ChatVectorDBChain with a streaming llm for combine docs
     # and a separate, non-streaming llm for question generation
@@ -73,12 +73,14 @@ def get_chat(
         question_manager.add_handler(tracer)
         stream_manager.add_handler(tracer)
 
-    question_gen_llm = OpenAI(
+    streaming_llm = OpenAI(
+        streaming=True,
+        callback_manager=stream_manager,
         verbose=True,
-        callback_manager=question_manager,
+        temperature=0,
     )
-    question_generator = LLMChain(
-        llm=question_gen_llm, prompt=CONDENSE_QUESTION_PROMPT, callback_manager=manager,
+    doc_chain = load_qa_chain(
+        streaming_llm, chain_type="stuff", prompt=QA_PROMPT, callback_manager=manager,
     )
 
-    return question_generator
+    return doc_chain
