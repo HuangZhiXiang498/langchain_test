@@ -1,48 +1,24 @@
-"""Main entrypoint for the app."""
 import logging
-import pickle
-from pathlib import Path
-from typing import Optional
 
+from langchain import LLMChain
+from langchain.chat_models import ChatOpenAI
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.templating import Jinja2Templates
-from langchain.vectorstores import VectorStore
-from callback import QuestionGenCallbackHandler, StreamingLLMCallbackHandler
-import query_data
 
 from schemas import ChatResponse
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
-vectorstore: Optional[VectorStore] = None
 
-
-@app.on_event("startup")
-async def startup_event():
-    logging.info("loading vectorstore")
-    if not Path("vectorstore.pkl").exists():
-        raise ValueError("vectorstore.pkl does not exist, please run ingest.py first")
-    with open("vectorstore.pkl", "rb") as f:
-        global vectorstore
-        vectorstore = pickle.load(f)
-
+llm_chain = LLMChain(llm=ChatOpenAI())
 
 @app.get("/")
 async def get(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-
 @app.websocket("/chat")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    question_handler = QuestionGenCallbackHandler(websocket)
-    stream_handler = StreamingLLMCallbackHandler(websocket)
-    chat_history = []
-    # qa_chain = get_chain(vectorstore, question_handler, stream_handler)
-    qa_chain = query_data.get_chain(vectorstore, question_handler, stream_handler)
-    # Use the below line instead of the above line to enable tracing
-    # Ensure `langchain-server` is running
-    # qa_chain = get_chain(vectorstore, question_handler, stream_handler, tracing=True)
 
     while True:
         try:
@@ -55,12 +31,10 @@ async def websocket_endpoint(websocket: WebSocket):
             start_resp = ChatResponse(sender="bot", message="", type="start")
             await websocket.send_json(start_resp.dict())
 
-            result = await qa_chain.acall(
-                {"question": question, "chat_history": chat_history}
-            )
-            chat_history.append((question, result["answer"]))
+            # Call OpenAI chat model to get the response
+            result = await llm_chain.acall(question)
 
-            end_resp = ChatResponse(sender="bot", message="", type="end")
+            end_resp = ChatResponse(sender="bot", message=result, type="end")
             await websocket.send_json(end_resp.dict())
         except WebSocketDisconnect:
             logging.info("websocket disconnect")
@@ -73,7 +47,6 @@ async def websocket_endpoint(websocket: WebSocket):
                 type="error",
             )
             await websocket.send_json(resp.dict())
-
 
 if __name__ == "__main__":
     import uvicorn
