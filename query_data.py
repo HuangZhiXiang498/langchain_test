@@ -27,7 +27,7 @@ QA_PROMPT = PromptTemplate(
     template=prompt_template, input_variables=["context", "question"]
 )
 QA_PROMPT_Chinese = PromptTemplate(
-    template=prompt_template, input_variables=["question"]
+    template=prompt_template_Chinese, input_variables=["question"]
 )
 
 
