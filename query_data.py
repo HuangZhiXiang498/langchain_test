@@ -12,7 +12,7 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.vectorstores.base import VectorStore, VectorStoreRetriever
 
-prompt_template = """Use the following pieces of context to answer the question at the end.
+prompt_template = """Use the following pieces of context to answer the question in Chinese at the end.
 
 {context}
 
