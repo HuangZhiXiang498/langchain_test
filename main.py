@@ -34,8 +34,9 @@ async def websocket_endpoint(websocket: WebSocket):
 
             # Call OpenAI chat model to get the response
             result = await llm_chain.acall({"question": question, "chat_history": chat_history})
+            logging.error(result)
             # chat_history.append((question, result["answer"]))
-            end_resp = ChatResponse(sender="bot", message=result, type="end")
+            end_resp = ChatResponse(sender="bot", message=result["answer"], type="end")
             await websocket.send_json(end_resp.dict())
         except WebSocketDisconnect:
             logging.info("websocket disconnect")
