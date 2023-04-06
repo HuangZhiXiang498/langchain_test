@@ -45,19 +45,15 @@ async def get(request: Request):
 @app.websocket("/chat1")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    question_handler = QuestionGenCallbackHandler(websocket)
-    stream_handler = StreamingLLMCallbackHandler(websocket)
+
     chat_history = []
     # qa_chain = get_chain(vectorstore, question_handler, stream_handler)
     question_gen_llm = ChatOpenAI(
         verbose=True,
-        callback_manager=question_handler,
     )
     streaming_llm = ChatOpenAI(
         streaming=True,
-        callback_manager=stream_handler,
         verbose=True,
-        temperature=0.7,
     )
     question_generator = LLMChain(
         llm=question_gen_llm, prompt=CONDENSE_QUESTION_PROMPT,
