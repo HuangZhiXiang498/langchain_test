@@ -1,6 +1,7 @@
 import logging
 
 from langchain import LLMChain
+from langchain.chains.chat_vector_db.prompts import CONDENSE_QUESTION_PROMPT
 from langchain.chat_models import ChatOpenAI
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.templating import Jinja2Templates
@@ -10,7 +11,7 @@ from schemas import ChatResponse
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-llm_chain = LLMChain(llm=ChatOpenAI())
+llm_chain = LLMChain(llm=ChatOpenAI(), prompt=CONDENSE_QUESTION_PROMPT)
 
 @app.get("/")
 async def get(request: Request):
