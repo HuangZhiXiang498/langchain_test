@@ -75,6 +75,7 @@ async def websocket_endpoint(websocket: WebSocket):
             )
             logging.error(result)
             result1 = await doc_chain.acall(result["text"])
+            logging.error(result1)
             chat_history.append((question, result1["answer"]))
 
             end_resp = ChatResponse(sender="bot", message="", type="end")
