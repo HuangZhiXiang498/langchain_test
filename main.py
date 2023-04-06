@@ -45,14 +45,18 @@ async def get(request: Request):
 @app.websocket("/chat1")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
+    stream_handler = StreamingLLMCallbackHandler(websocket)
+    stream_manager = AsyncCallbackManager([stream_handler])
 
     chat_history = []
     # qa_chain = get_chain(vectorstore, question_handler, stream_handler)
-    question_gen_llm = ChatOpenAI(
+    streaming_llm = ChatOpenAI(
+        streaming=True,
+        callback_manager=stream_manager,
         verbose=True,
     )
     question_generator = LLMChain(
-        llm=question_gen_llm, prompt=query_data.QA_PROMPT_Chinese,
+        llm=streaming_llm, prompt=query_data.QA_PROMPT_Chinese, callback_manager=AsyncCallbackManager([]),
     )
     # Use the below line instead of the above line to enable tracing
     # Ensure `langchain-server` is running
@@ -72,11 +76,11 @@ async def websocket_endpoint(websocket: WebSocket):
                 {"question": question, "chat_history": chat_history}
             )
             logging.error(result)
-
-            answer = result["text"]
-            chat_history.append((question, answer))
-            stream_resp = ChatResponse(sender="bot", message=answer, type="stream")
-            await websocket.send_json(stream_resp.dict())
+            #
+            # answer = result["text"]
+            chat_history.append((question, result['answer']))
+            # stream_resp = ChatResponse(sender="bot", message=answer, type="stream")
+            # await websocket.send_json(stream_resp.dict())
 
             end_resp = ChatResponse(sender="bot", message="", type="end")
             await websocket.send_json(end_resp.dict())
@@ -91,9 +95,6 @@ async def websocket_endpoint(websocket: WebSocket):
                 type="error",
             )
             await websocket.send_json(resp.dict())
-
-
-
 
 
 @app.websocket("/chat")
