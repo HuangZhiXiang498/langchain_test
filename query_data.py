@@ -3,6 +3,7 @@ from langchain.callbacks.base import AsyncCallbackManager
 from langchain.callbacks.tracers import LangChainTracer
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chains import ChatVectorDBChain
+from langchain.chat_models import ChatOpenAI
 from langchain.chains.chat_vector_db.prompts import (
     CONDENSE_QUESTION_PROMPT,
     QA_PROMPT)
@@ -28,14 +29,12 @@ def get_chain(
         question_manager.add_handler(tracer)
         stream_manager.add_handler(tracer)
 
-    question_gen_llm = OpenAI(
+    question_gen_llm = ChatOpenAI(
         model_name="gpt-3.5-turbo-0301",
         verbose=True,
-        temperature=0.7,
         callback_manager=question_manager,
     )
     streaming_llm = OpenAI(
-        model_name="gpt-3.5-turbo-0301",
         streaming=True,
         callback_manager=stream_manager,
         verbose=True,
