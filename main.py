@@ -65,8 +65,8 @@ async def websocket_endpoint(websocket: WebSocket):
             resp = ChatResponse(sender="you", message=question, type="stream")
             await websocket.send_json(resp.dict())
             # Construct a response
-            # start_resp = ChatResponse(sender="bot", message="", type="start")
-            # await websocket.send_json(start_resp.dict())
+            start_resp = ChatResponse(sender="bot", message="", type="start")
+            await websocket.send_json(start_resp.dict())
 
             result = await question_generator.acall(
                 {"question": question, "chat_history": chat_history}
@@ -75,7 +75,10 @@ async def websocket_endpoint(websocket: WebSocket):
 
             answer = result["text"]
             chat_history.append((question, answer))
-            end_resp = ChatResponse(sender="bot", message=answer, type="end")
+            stream_resp = ChatResponse(sender="bot", message=answer, type="stream")
+            await websocket.send_json(stream_resp.dict())
+
+            end_resp = ChatResponse(sender="bot", message="", type="end")
             await websocket.send_json(end_resp.dict())
         except WebSocketDisconnect:
             logging.info("websocket disconnect")
