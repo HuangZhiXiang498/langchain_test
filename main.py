@@ -59,12 +59,11 @@ async def websocket_endpoint(websocket: WebSocket):
         verbose=True,
         temperature=0.7,
     )
-    manager = AsyncCallbackManager([])
     question_generator = LLMChain(
-        llm=question_gen_llm, prompt=CONDENSE_QUESTION_PROMPT, callback_manager=manager,
+        llm=question_gen_llm, prompt=CONDENSE_QUESTION_PROMPT,
     )
     doc_chain = load_qa_chain(
-        streaming_llm, chain_type="stuff", prompt=query_data.QA_PROMPT, callback_manager=manager,
+        streaming_llm, chain_type="stuff", prompt=query_data.QA_PROMPT,
     )
     # Use the below line instead of the above line to enable tracing
     # Ensure `langchain-server` is running
