@@ -30,13 +30,14 @@ def get_chain(
 
     question_gen_llm = OpenAI(
         verbose=True,
+        temperature=0.7,
         callback_manager=question_manager,
     )
     streaming_llm = OpenAI(
         streaming=True,
         callback_manager=stream_manager,
         verbose=True,
-        # temperature=0,
+        temperature=0.7,
     )
 
     question_generator = LLMChain(
