@@ -18,10 +18,17 @@ prompt_template = """Use the following pieces of context to answer the question 
 
 Question: {question}
 Helpful Answer:"""
+
+prompt_template_Chinese = """Use the answer the question in Chinese .
+
+Question: {question}
+Helpful Answer:"""
 QA_PROMPT = PromptTemplate(
     template=prompt_template, input_variables=["context", "question"]
 )
-
+QA_PROMPT_Chinese = PromptTemplate(
+    template=prompt_template, input_variables=["question"]
+)
 
 
 def get_chain(

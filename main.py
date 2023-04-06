@@ -59,7 +59,7 @@ async def websocket_endpoint(websocket: WebSocket):
         llm=question_gen_llm, prompt=CONDENSE_QUESTION_PROMPT,
     )
     doc_chain = load_qa_chain(
-        streaming_llm, chain_type="stuff", prompt=query_data.QA_PROMPT,
+        streaming_llm, chain_type="stuff", prompt=query_data.QA_PROMPT_Chinese,
     )
     # Use the below line instead of the above line to enable tracing
     # Ensure `langchain-server` is running
