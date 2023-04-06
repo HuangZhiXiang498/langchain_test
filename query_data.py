@@ -29,11 +29,13 @@ def get_chain(
         stream_manager.add_handler(tracer)
 
     question_gen_llm = OpenAI(
+        model_name="gpt-3.5-turbo-0301",
         verbose=True,
         temperature=0.7,
         callback_manager=question_manager,
     )
     streaming_llm = OpenAI(
+        model_name="gpt-3.5-turbo-0301",
         streaming=True,
         callback_manager=stream_manager,
         verbose=True,
