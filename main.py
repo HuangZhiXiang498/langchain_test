@@ -68,7 +68,7 @@ async def websocket_endpoint(websocket: WebSocket):
             )
             logging.error(result)
 
-            chat_history.append((question, result["answer"]))
+            chat_history.append((question, result["text"]))
 
             end_resp = ChatResponse(sender="bot", message="", type="end")
             await websocket.send_json(end_resp.dict())
